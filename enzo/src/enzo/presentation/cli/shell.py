@@ -8,7 +8,11 @@ from core.ports.identity_provider import IdentityProvider
 from prompt_toolkit import PromptSession
 from prompt_toolkit.formatted_text import HTML
 from rich.console import Console
+from rich.live import Live
+from rich.padding import Padding
 from rich.panel import Panel
+from rich.spinner import Spinner
+from rich.text import Text
 
 from enzo.application.loop import TriageAgent
 from enzo.presentation.ui.banner import print_banner
@@ -50,7 +54,7 @@ async def run_shell(agent: TriageAgent, provider: IdentityProvider, identity: Id
             console.print(f"[deny]unknown command[/deny] · {HELP}")
         else:
             try:
-                with console.status("[muted]enzo is thinking…[/muted]", spinner="dots"):
+                with _working("enzo is thinking…"):
                     reply = await agent.ask(text, identity)
                 _print_reply(reply)
                 while reply.pending:  # a remote agent waits for the user; answers go back through the agent
@@ -59,7 +63,7 @@ async def run_shell(agent: TriageAgent, provider: IdentityProvider, identity: Id
                     if not answer or answer.startswith("/"):
                         console.print(f"[muted]{reply.pending.agent} is waiting: answer approve or reject[/muted]")
                         continue
-                    with console.status(f"[muted]{reply.pending.agent} is working…[/muted]", spinner="dots"):
+                    with _working(f"{reply.pending.agent} is working…"):
                         reply = await agent.answer(reply.trace_id, answer)
                     _print_reply(reply)
             except GatewayError as error:
@@ -93,6 +97,17 @@ def _print_step(step: ToolCall) -> None:
     style = "allow" if step.decision == "ALLOW" else "deny"
     console.print(f"  → {step.service:<18} {step.action:<30} [{style}]{step.decision}[/{style}]")
 
+def _working(label: str) -> Live:
+    """Show an indented spinner, set apart from the steps above it, until the block ends.
+
+    Args:
+        label: What is happening, shown next to the spinner.
+
+    Returns:
+        The live display, to use as a context manager.
+    """
+    spinner = Spinner("dots", text=Text(f" {label}", style="muted"), style="accent")
+    return Live(Padding(spinner, (1, 0, 0, 2)), console=console, transient=True)
 
 
 def _switch(provider: IdentityProvider, identity: Identity, command: str) -> Identity:
