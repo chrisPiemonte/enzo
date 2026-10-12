@@ -1,7 +1,9 @@
 """Talk to an MCP server over streamable HTTP."""
 
 from core.models.chat import SkillSpec
+from core.tracing import traced
 from mcp import Client
+from mlflow.entities import SpanType
 
 PATH = "/mcp"
 
@@ -23,6 +25,7 @@ async def list_tools(url: str) -> list[SkillSpec]:
     ]
 
 
+@traced("mcp_call_tool", SpanType.TOOL)
 async def call_tool(url: str, name: str, args: dict[str, object]) -> tuple[bool, str]:
     """Call one tool on an MCP server.
 

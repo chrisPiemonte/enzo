@@ -7,6 +7,8 @@ from a2a.client import A2ACardResolver, ClientConfig, create_client
 from a2a.types import AgentCard, Message, Part, Role, SendMessageRequest, Task, TaskState
 from core.models.agents import AgentTask
 from core.models.agents import TaskState as Status
+from core.tracing import traced
+from mlflow.entities import SpanType
 
 STATES: dict[int, Status] = {
     TaskState.TASK_STATE_INPUT_REQUIRED: "input-required",
@@ -29,6 +31,7 @@ async def fetch_card(url: str) -> AgentCard:
         return await A2ACardResolver(http, url).get_agent_card()
 
 
+@traced("a2a_send", SpanType.AGENT)
 async def send(url: str, agent: str, text: str, task_id: str | None = None) -> AgentTask:
     """Send a message to an agent, starting a task or continuing one.
 

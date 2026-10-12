@@ -3,6 +3,8 @@
 import logging
 
 from core.models.chat import SkillSpec
+from core.tracing import traced
+from mlflow.entities import SpanType
 from pydantic import BaseModel
 
 from gateway.clients import a2a, mcp
@@ -24,6 +26,7 @@ class Entry(BaseModel):
     service: Service
 
 
+@traced("build_catalog", SpanType.CHAIN)
 async def build_catalog(services: list[Service]) -> dict[str, Entry]:
     """Collect the tools of every service; a name already taken is refused, an unreachable service skipped.
 

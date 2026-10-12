@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     openai_url: str = "http://localhost:11434/v1"
     anthropic_url: str = "http://localhost:11434"
     docker_socket: str = "/var/run/docker.sock"
+    mlflow_url: str = "http://localhost:5001"
+    experiment: str = "gateway"
 
 
 settings = Settings()

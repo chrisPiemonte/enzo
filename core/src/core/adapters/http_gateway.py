@@ -3,6 +3,7 @@
 from typing import Any
 
 import httpx
+from mlflow.tracing import get_tracing_context_headers_for_http_request
 
 from core.models.agents import AgentTask, TaskReply
 from core.models.chat import Completion, CompletionRequest, Message, SkillCall, SkillResult, SkillSpec
@@ -76,7 +77,7 @@ class HttpGateway:
         Args:
             method: HTTP method.
             path: Path under the gateway URL.
-            identity: Sent as headers; STUB until signed tokens replace them.
+            identity: Sent as headers; STUB until signed tokens replace them. The trace context is sent too.
             body: JSON body, if any.
 
         Returns:
@@ -86,6 +87,7 @@ class HttpGateway:
             GatewayError: If the gateway is unreachable or answers with an error.
         """
         headers = {"X-User": identity.user, "X-Agent": identity.agent} if identity else {}
+        headers |= get_tracing_context_headers_for_http_request()  # the gateway continues the caller's trace
         try:
             async with httpx.AsyncClient(base_url=self.url, timeout=TIMEOUT_SECONDS) as client:
                 response = await client.request(method, path, json=body, headers=headers)

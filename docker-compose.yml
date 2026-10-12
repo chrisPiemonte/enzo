@@ -28,8 +28,10 @@ services:
       mlflow server --host 0.0.0.0 --port 5000
       --backend-store-uri sqlite:////data/mlflow.db
       --artifacts-destination /data/artifacts
+      --allowed-hosts mlflow:5000,localhost:5001,localhost:5000
     ports:
       - "5001:5000"     # 5001 on the host: macOS AirPlay already uses 5000
+    # --allowed-hosts: MLflow rejects unknown Host headers; services reach it as mlflow:5000, the host as localhost:5001
     volumes:
       - ./data/runtime/mlflow:/data
 
@@ -43,6 +45,7 @@ services:
     environment:
       GATEWAY_OPENAI_URL: ${GATEWAY_DOCKER_OLLAMA_URL}/v1
       GATEWAY_ANTHROPIC_URL: ${GATEWAY_DOCKER_OLLAMA_URL}
+      GATEWAY_MLFLOW_URL: http://mlflow:5000   # MLflow as seen from inside Docker
     ports:
       - "8000:8000"
     volumes:
@@ -51,6 +54,8 @@ services:
     depends_on:
       ollama-pull:
         condition: service_completed_successfully
+      mlflow:
+        condition: service_started
 
   mcp-telemetry:
     build:

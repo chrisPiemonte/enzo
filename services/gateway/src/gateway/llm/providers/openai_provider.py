@@ -4,6 +4,8 @@ import json
 
 import openai
 from core.models.chat import Completion, Message, SkillCall, SkillSpec
+from core.tracing import traced
+from mlflow.entities import SpanType
 from openai.types.chat import (
     ChatCompletionMessageFunctionToolCallParam,
     ChatCompletionMessageParam,
@@ -29,6 +31,7 @@ class OpenAIProvider:
         self.name = name
         self.client = openai.AsyncOpenAI(base_url=base_url, api_key=API_KEY)
 
+    @traced("openai_provider", SpanType.LLM)
     async def complete(self, model: str, messages: list[Message], tools: list[SkillSpec]) -> Completion:
         """Complete a conversation through the OpenAI API.
 

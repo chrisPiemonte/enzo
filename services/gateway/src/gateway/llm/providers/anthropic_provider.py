@@ -3,6 +3,8 @@
 import anthropic
 from anthropic.types import MessageParam, TextBlockParam, ToolParam, ToolResultBlockParam, ToolUseBlockParam
 from core.models.chat import Completion, Message, SkillCall, SkillSpec
+from core.tracing import traced
+from mlflow.entities import SpanType
 
 from gateway.llm.providers.provider import ProviderError
 
@@ -24,6 +26,7 @@ class AnthropicProvider:
         self.name = name
         self.client = anthropic.AsyncAnthropic(base_url=base_url, api_key=API_KEY)
 
+    @traced("anthropic_provider", SpanType.LLM)
     async def complete(self, model: str, messages: list[Message], tools: list[SkillSpec]) -> Completion:
         """Complete a conversation through the Anthropic API.
 

@@ -4,6 +4,8 @@ import json
 from typing import Literal
 
 import httpx
+from core.tracing import traced
+from mlflow.entities import SpanType
 from pydantic import BaseModel
 
 ServiceKind = Literal["mcp", "a2a"]
@@ -21,6 +23,7 @@ class DiscoveryError(RuntimeError):
     """Docker could not be asked which services are running."""
 
 
+@traced("discover_services", SpanType.RETRIEVER)
 async def discover(docker_socket: str) -> list[Service]:
     """List running containers labelled enzo.kind (mcp or a2a), as services.
 
