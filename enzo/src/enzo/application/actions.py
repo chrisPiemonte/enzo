@@ -3,8 +3,11 @@
 from dataclasses import dataclass, field
 
 from core.models.agents import AgentTask, TaskReply
-from core.models.chat import Message, SkillCall
+from core.models.chat import Message, SkillCall, SkillResult
+from core.models.identity import Identity
 from core.ports.gateway import Gateway
+from core.tracing import traced
+from mlflow.entities import SpanType
 
 from enzo.application.recorder import Recorder
 
@@ -38,13 +41,27 @@ class Actions:
         """
         messages: list[Message] = []
         for index, call in enumerate(calls):
-            result = await self.gateway.call_tool(call, recorder.identity)
+            result = await self._call_tool(call, recorder.identity)
             await recorder.record(result.source or "tool", call.name, result.decision, model)
             if result.task and result.task.state == "input-required":
                 return Outcome(messages, pending=result.task, waiting_call=call, rest=calls[index + 1 :])
             messages.append(Message(role="tool", call_id=call.id, content=result.content))
         return Outcome(messages)
 
+    @traced("call_tool", SpanType.TOOL)
+    async def _call_tool(self, call: SkillCall, identity: Identity) -> SkillResult:
+        """Call one tool through the gateway.
+
+        Args:
+            call: The tool call.
+            identity: User and agent behind the call.
+
+        Returns:
+            The tool's result.
+        """
+        return await self.gateway.call_tool(call, identity)
+
+    @traced("reply_to_agent", SpanType.TOOL)
     async def reply(self, task: AgentTask, answer: str, recorder: Recorder) -> AgentTask:
         """Pass the user's answer to the remote agent waiting for it.
 

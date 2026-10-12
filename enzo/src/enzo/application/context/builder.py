@@ -8,6 +8,8 @@ from core.ports.gateway import Gateway
 from core.ports.knowledge_store import KnowledgeStore
 from core.ports.memory_store import MemoryStore
 from core.ports.prompt_store import PromptStore
+from core.tracing import traced
+from mlflow.entities import SpanType
 
 from enzo.application.context.context import Context
 from enzo.application.context.steps.instructions import load_instructions
@@ -26,6 +28,7 @@ class ContextBuilder:
     knowledge: KnowledgeStore
     gateway: Gateway
 
+    @traced("build_context", SpanType.CHAIN)
     async def build(self, question: str, identity: Identity) -> Context:
         """Build the context for a new question.
 

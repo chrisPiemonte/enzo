@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     prompt: str = "triage-system"
     prompt_version: str = "production"
     prompts_dir: Path = Path("data/context/prompts")
+    mlflow_url: str = "http://localhost:5001"
+    experiment: str = "enzo"
 
     # Adapter switches, one per port.
     gateway: Literal["mock", "http"] = "mock"

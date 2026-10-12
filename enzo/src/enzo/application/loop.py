@@ -4,13 +4,16 @@ import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
+import mlflow
 from core.models.agents import AgentTask
-from core.models.chat import Message, SkillCall
+from core.models.chat import Completion, Message, SkillCall
 from core.models.identity import Identity
 from core.models.reply import AgentReply, ToolCall
 from core.ports.audit_log import AuditLog
 from core.ports.gateway import Gateway
 from core.ports.memory_store import MemoryStore
+from core.tracing import traced
+from mlflow.entities import SpanType
 
 from enzo.application.actions import Actions, Outcome
 from enzo.application.context.builder import ContextBuilder
@@ -44,6 +47,7 @@ class TriageAgent:
     paused: dict[str, Paused] = field(default_factory=dict)  # trace id -> question on hold
     on_step: Callable[[ToolCall], None] | None = None  # called with each step as it happens
 
+    @traced("ask", SpanType.AGENT)
     async def ask(self, question: str, identity: Identity) -> AgentReply:
         """Start answering a question.
 
@@ -55,8 +59,10 @@ class TriageAgent:
             The answer, or, if a remote agent needs the user, its question in pending.
         """
         recorder = Recorder(self.audit, identity, uuid.uuid4().hex[:8], self.on_step)
+        mlflow.update_current_trace(tags={"enzo.trace_id": recorder.trace_id, "enzo.user": identity.user})
         return await self._run(await self.builder.build(question, identity), recorder)
 
+    @traced("answer", SpanType.AGENT)
     async def answer(self, trace_id: str, text: str) -> AgentReply:
         """Pass the user's answer to the remote agent; once its task ends, hand the outcome back to the model.
 
@@ -68,6 +74,7 @@ class TriageAgent:
             The agent's next question, or the model's answer now that the task is over.
         """
         paused = self.paused.pop(trace_id)
+        mlflow.update_current_trace(tags={"enzo.trace_id": trace_id, "enzo.user": paused.recorder.identity.user})
         task = await self.actions.reply(paused.task, text, paused.recorder)
         if task.state == "input-required":
             paused.task = task
@@ -89,7 +96,7 @@ class TriageAgent:
             The answer, or a reply pending on a remote agent.
         """
         for _ in range(MAX_TURNS):
-            completion = await self.gateway.complete(context.messages(), context.tools, recorder.identity)
+            completion = await self._think(context, recorder)
             text = completion.text or ""
             if not completion.skill_calls:
                 question = context.history[0]
@@ -101,6 +108,19 @@ class TriageAgent:
                 return await self._continue(context, recorder, completion.model, text, outcome)
             context.history += outcome.messages
         return self._reply(recorder, "", "No answer within the turn limit.")
+
+    @traced("think", SpanType.LLM)
+    async def _think(self, context: Context, recorder: Recorder) -> Completion:
+        """Ask the model for its next turn, through the gateway.
+
+        Args:
+            context: Everything the model sees.
+            recorder: Records of this question; provides the identity.
+
+        Returns:
+            The model's text and/or tool calls.
+        """
+        return await self.gateway.complete(context.messages(), context.tools, recorder.identity)
 
     async def _continue(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self, context: Context, recorder: Recorder, model: str, text: str, outcome: Outcome

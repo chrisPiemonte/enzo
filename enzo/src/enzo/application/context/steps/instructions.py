@@ -1,8 +1,11 @@
 """Step: load the system prompt."""
 
 from core.ports.prompt_store import PromptStore
+from core.tracing import traced
+from mlflow.entities import SpanType
 
 
+@traced("load_instructions", SpanType.CHAIN)
 async def load_instructions(prompts: PromptStore, name: str, ref: str) -> str:
     """Load the agent's instructions from the prompt store.
 

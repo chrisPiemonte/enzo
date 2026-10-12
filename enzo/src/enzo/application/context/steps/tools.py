@@ -2,8 +2,11 @@
 
 from core.models.chat import SkillSpec
 from core.ports.gateway import Gateway
+from core.tracing import traced
+from mlflow.entities import SpanType
 
 
+@traced("load_tools", SpanType.CHAIN)
 async def load_tools(gateway: Gateway) -> list[SkillSpec]:
     """Retrieve the gateway's current tool catalogue: MCP tools and agent card skills.
 
