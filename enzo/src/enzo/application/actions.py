@@ -2,9 +2,10 @@
 
 from dataclasses import dataclass, field
 
+from core.auth import DENIED
 from core.models.agents import AgentTask, TaskReply
 from core.models.chat import Message, SkillCall, SkillResult
-from core.models.identity import Identity
+from core.models.identity import Decision, Identity
 from core.ports.gateway import Gateway
 from core.tracing import traced
 from mlflow.entities import SpanType
@@ -75,5 +76,6 @@ class Actions:
         """
         reply = TaskReply(agent=task.agent, task_id=task.task_id, answer=answer)
         updated = await self.gateway.reply(reply, recorder.identity)
-        await recorder.record(f"a2a:{task.agent}", f"reply:{answer}", "ALLOW")
+        decision: Decision = "DENY" if updated.message.startswith(DENIED) else "ALLOW"
+        await recorder.record(f"a2a:{task.agent}", f"reply:{answer}", decision)
         return updated

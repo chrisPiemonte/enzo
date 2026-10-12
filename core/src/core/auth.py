@@ -11,6 +11,7 @@ from core.models.identity import AgentClaims, Identity, UserClaims
 AGENT_HEADER = "authorization"  # "Bearer <agent token>"
 USER_HEADER = "x-user-token"
 ALGORITHM = "HS256"
+DENIED = "access denied"  # prefix of every denial message, so callers can tell a denial from other failures
 
 C = TypeVar("C", bound=BaseModel)
 

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from core.auth import authorize
+from core.auth import DENIED, authorize
 from mcp.server import MCPServer
 from mcp.server.mcpserver import Context
 from mcp.server.mcpserver.exceptions import ToolError
@@ -40,7 +40,7 @@ def get_service_history(serial: str, ctx: Context) -> dict[str, Any]:
     try:
         authorize(ctx.headers, SECRET, "history:read", record["account"])
     except PermissionError as error:  # a ToolError keeps its message; the gateway reports it as DENY
-        raise ToolError(f"access denied: {error}") from error
+        raise ToolError(f"{DENIED}: {error}") from error
     return {"serial": serial, **record, "dataset_version": DATA["dataset_version"]}
 
 

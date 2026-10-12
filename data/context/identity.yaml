@@ -7,6 +7,9 @@ users:
   user:tom:
     accounts: [Bluefen Diagnostics]
     approve_orders: true
+  user:ana:                # may read Novacrest data, may not approve orders
+    accounts: [Novacrest Pharma]
+    approve_orders: false
 
 agents:
   agent:triage:

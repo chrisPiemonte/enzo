@@ -99,6 +99,7 @@ services:
       dockerfile: services/parts-agent/Dockerfile
     environment:
       PARTS_AGENT_URL: http://parts-agent:9100/   # advertised on the agent card; callers send A2A messages here
+      IDENTITY_SECRET: ${IDENTITY_SECRET}           # verifies the caller's tokens
     labels:
       enzo.kind: a2a      # discovered by the gateway's registry
       enzo.port: "9100"

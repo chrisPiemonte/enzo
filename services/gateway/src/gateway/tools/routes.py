@@ -2,6 +2,7 @@
 
 from typing import Annotated
 
+from core.auth import DENIED
 from core.models.agents import AgentTask, TaskReply
 from core.models.chat import SkillCall, SkillResult, SkillSpec
 from core.models.identity import Decision
@@ -47,12 +48,13 @@ async def call(request: SkillCall, tokens: Tokens) -> SkillResult:
     source = f"{entry.service.kind}:{entry.service.name}"
     if entry.service.kind == "a2a":
         task = await a2a.send(entry.service.url, entry.service.name, str(request.args.get("request", "")), tokens)
+        decision: Decision = "DENY" if task.message.startswith(DENIED) else "ALLOW"
         return SkillResult(
-            call_id=request.id, name=request.name, decision="ALLOW", content=task.message, source=source, task=task
+            call_id=request.id, name=request.name, decision=decision, content=task.message, source=source, task=task
         )
     failed, text = await mcp.call_tool(entry.service.url, request.name, request.args, tokens)
-    decision: Decision = "DENY" if failed else "ALLOW"
-    return SkillResult(call_id=request.id, name=request.name, decision=decision, content=text, source=source)
+    mcp_decision: Decision = "DENY" if failed else "ALLOW"
+    return SkillResult(call_id=request.id, name=request.name, decision=mcp_decision, content=text, source=source)
 
 
 @router.post("/tasks/reply")

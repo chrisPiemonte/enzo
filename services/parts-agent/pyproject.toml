@@ -5,6 +5,7 @@ description = "Enzo – A2A agent that orders spare parts and schedules technici
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "a2a-sdk[http-server]>=1.2.2",
+    "core",
     "pyyaml>=6.0.3",
     "starlette>=1.7.0",
     "uvicorn>=0.54.0",
@@ -19,3 +20,6 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-name = "parts"
+
+[tool.uv.sources]
+core = { workspace = true }

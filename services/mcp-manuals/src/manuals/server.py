@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from core.auth import authorize
+from core.auth import DENIED, authorize
 from mcp.server import MCPServer
 from mcp.server.mcpserver import Context
 from mcp.server.mcpserver.exceptions import ToolError
@@ -35,7 +35,7 @@ def search_manual(model: str, query: str, ctx: Context) -> dict[str, Any]:
     try:
         authorize(ctx.headers, SECRET, "manuals:read")
     except PermissionError as error:  # a ToolError keeps its message; the gateway reports it as DENY
-        raise ToolError(f"access denied: {error}") from error
+        raise ToolError(f"{DENIED}: {error}") from error
     # MOCK: plain substring match standing in for retrieval (the RAG comes later).
     sections = DATA["models"].get(model)
     if sections is None:

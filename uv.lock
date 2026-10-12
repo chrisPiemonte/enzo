@@ -1544,6 +1544,7 @@ version = "0.1.0"
 source = { editable = "services/parts-agent" }
 dependencies = [
     { name = "a2a-sdk", extra = ["http-server"] },
+    { name = "core" },
     { name = "pyyaml" },
     { name = "starlette" },
     { name = "uvicorn" },
@@ -1552,6 +1553,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "a2a-sdk", extras = ["http-server"], specifier = ">=1.2.2" },
+    { name = "core", editable = "core" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "starlette", specifier = ">=1.7.0" },
     { name = "uvicorn", specifier = ">=0.54.0" },
