@@ -5,6 +5,7 @@ from typing import Any
 import httpx
 from mlflow.tracing import get_tracing_context_headers_for_http_request
 
+from core.auth import to_headers
 from core.models.agents import AgentTask, TaskReply
 from core.models.chat import Completion, CompletionRequest, Message, SkillCall, SkillResult, SkillSpec
 from core.models.identity import Identity
@@ -39,13 +40,16 @@ class HttpGateway:
         request = CompletionRequest(model=self.alias, messages=messages, tools=tools)
         return Completion.model_validate(await self._send("POST", "/v1/complete", identity, request.model_dump()))
 
-    async def list_tools(self) -> list[SkillSpec]:
+    async def list_tools(self, identity: Identity) -> list[SkillSpec]:
         """List the tools of every running service.
+
+        Args:
+            identity: User and agent asking.
 
         Returns:
             The current tool catalogue.
         """
-        return [SkillSpec.model_validate(tool) for tool in await self._send("GET", "/v1/tools")]
+        return [SkillSpec.model_validate(tool) for tool in await self._send("GET", "/v1/tools", identity)]
 
     async def call_tool(self, call: SkillCall, identity: Identity) -> SkillResult:
         """Call a tool through the gateway.
@@ -77,7 +81,7 @@ class HttpGateway:
         Args:
             method: HTTP method.
             path: Path under the gateway URL.
-            identity: Sent as headers; STUB until signed tokens replace them. The trace context is sent too.
+            identity: Its signed tokens are sent as headers. The trace context is sent too.
             body: JSON body, if any.
 
         Returns:
@@ -86,7 +90,7 @@ class HttpGateway:
         Raises:
             GatewayError: If the gateway is unreachable or answers with an error.
         """
-        headers = {"X-User": identity.user, "X-Agent": identity.agent} if identity else {}
+        headers = to_headers(identity) if identity else {}
         headers |= get_tracing_context_headers_for_http_request()  # the gateway continues the caller's trace
         try:
             async with httpx.AsyncClient(base_url=self.url, timeout=TIMEOUT_SECONDS) as client:

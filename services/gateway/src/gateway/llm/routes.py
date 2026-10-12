@@ -1,8 +1,9 @@
 """HTTP routes for model completions."""
 
 from core.models.chat import Completion, CompletionRequest
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from gateway.auth import caller_tokens
 from gateway.llm.config import AliasConfig, load_config
 from gateway.llm.providers.factory import build_provider
 from gateway.llm.providers.provider import ProviderError
@@ -23,7 +24,7 @@ def models() -> dict[str, AliasConfig]:
     return config.aliases
 
 
-@router.post("/complete")
+@router.post("/complete", dependencies=[Depends(caller_tokens)])
 async def complete(request: CompletionRequest) -> Completion:
     """Complete a conversation with the model behind the requested alias.
 

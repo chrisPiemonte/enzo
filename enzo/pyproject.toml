@@ -6,7 +6,7 @@ requires-python = ">=3.13,<3.14"
 dependencies = [
     "a2a-sdk>=1.2.2",
     "anthropic>=1.13.0",
-    "core",
+    "core[tracing]",
     "httpx>=0.28.1",
     "mcp>=2.3.0",
     "mlflow>=3.17.0",

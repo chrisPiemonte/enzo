@@ -32,13 +32,14 @@ async def fetch_card(url: str) -> AgentCard:
 
 
 @traced("a2a_send", SpanType.AGENT)
-async def send(url: str, agent: str, text: str, task_id: str | None = None) -> AgentTask:
-    """Send a message to an agent, starting a task or continuing one.
+async def send(url: str, agent: str, text: str, headers: dict[str, str], task_id: str | None = None) -> AgentTask:
+    """Send a message to an agent on behalf of the caller, starting a task or continuing one.
 
     Args:
         url: Base URL of the agent.
         agent: Agent name, reported in the task.
         text: The request, or the answer to an input-required task.
+        headers: The caller's token headers; the agent checks them.
         task_id: The task to continue; None starts a new one.
 
     Returns:
@@ -46,7 +47,9 @@ async def send(url: str, agent: str, text: str, task_id: str | None = None) -> A
     """
     message = Message(message_id=uuid.uuid4().hex, role=Role.ROLE_USER, parts=[Part(text=text)], task_id=task_id or "")
     task = Task()
-    async with await create_client(url, ClientConfig(streaming=False)) as client:
+    async with httpx.AsyncClient(headers=headers) as http, await create_client(
+        url, ClientConfig(streaming=False, httpx_client=http)
+    ) as client:
         async for response in client.send_message(SendMessageRequest(message=message)):
             if response.HasField("task"):
                 task = response.task

@@ -5,9 +5,14 @@ description = "Enzo – core models, ports and adapters shared by the agent and 
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "httpx>=0.28.1",
-    "mlflow>=3.17.0",
     "pydantic>=2.14.0",
+    "pyjwt>=2.15.1",
     "pyyaml>=6.0.3",
+]
+
+[project.optional-dependencies]
+tracing = [
+    "mlflow>=3.17.0",
 ]
 
 [tool.uv.build-backend]

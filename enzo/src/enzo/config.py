@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,6 +19,8 @@ class Settings(BaseSettings):
     prompt: str = "triage-system"
     prompt_version: str = "production"
     prompts_dir: Path = Path("data/context/prompts")
+    identity_file: Path = Path("data/context/identity.yaml")
+    identity_secret: str = Field(validation_alias="IDENTITY_SECRET")  # shared by every service
     mlflow_url: str = "http://localhost:5001"
     experiment: str = "enzo"
 

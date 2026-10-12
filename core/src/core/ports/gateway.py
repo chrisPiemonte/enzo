@@ -29,8 +29,11 @@ class Gateway(Protocol):
             GatewayError: If the gateway fails.
         """
 
-    async def list_tools(self) -> list[SkillSpec]:
+    async def list_tools(self, identity: Identity) -> list[SkillSpec]:
         """List the tools of every running service: MCP tools and agent card skills.
+
+        Args:
+            identity: User and agent asking.
 
         Returns:
             The current tool catalogue.

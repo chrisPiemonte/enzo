@@ -6,9 +6,10 @@ requires-python = ">=3.13,<3.14"
 dependencies = [
     "a2a-sdk>=1.2.2",
     "anthropic>=1.13.0",
-    "core",
+    "core[tracing]",
     "fastapi>=0.143.0",
     "httpx>=0.28.1",
+    "httpx2>=2.13.1",
     "mcp>=2.3.0",
     "openai>=3.28.0",
     "pydantic-settings>=2.15.0",

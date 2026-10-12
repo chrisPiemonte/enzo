@@ -3,6 +3,7 @@
 from core.adapters.file_prompt_store import FilePromptStore
 from core.adapters.http_gateway import HttpGateway
 from core.ports.gateway import Gateway
+from core.ports.identity_provider import IdentityProvider
 from core.tracing import setup as setup_tracing
 
 from enzo.application.actions import Actions
@@ -13,6 +14,7 @@ from enzo.infrastructure.mocks.audit import MockAuditLog
 from enzo.infrastructure.mocks.gateway import MockGateway
 from enzo.infrastructure.mocks.knowledge import MockKnowledgeStore
 from enzo.infrastructure.mocks.memory import MockMemoryStore
+from enzo.infrastructure.stubs.identity_provider import StubIdentityProvider
 
 
 def build_agent(settings: Settings) -> TriageAgent:
@@ -50,3 +52,15 @@ def _gateway(settings: Settings) -> Gateway:
             return HttpGateway(settings.gateway_url, settings.model_alias)
         case "mock":
             return MockGateway()
+
+
+def build_identity_provider(settings: Settings) -> IdentityProvider:
+    """Build the identity provider.
+
+    Args:
+        settings: Agent settings with the identity file and the shared secret.
+
+    Returns:
+        The stub identity provider.
+    """
+    return StubIdentityProvider(settings.identity_file, settings.identity_secret)

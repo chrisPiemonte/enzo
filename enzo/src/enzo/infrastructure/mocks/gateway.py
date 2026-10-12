@@ -41,8 +41,11 @@ class MockGateway:
         offered = agents.ORDER_TOOL in tools
         return Completion(model="mock", provider="mock", text=ANSWER, skill_calls=calls if offered else [])
 
-    async def list_tools(self) -> list[SkillSpec]:
+    async def list_tools(self, identity: Identity) -> list[SkillSpec]:
         """List the canned tools.
+
+        Args:
+            identity: Ignored.
 
         Returns:
             The three skills and the parts agent's ordering skill.

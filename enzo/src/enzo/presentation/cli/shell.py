@@ -1,8 +1,10 @@
 """Interactive shell: slash commands, questions, and conversations handed off to remote agents."""
 
+from core.auth import AuthError
 from core.models.identity import Identity
 from core.models.reply import AgentReply, ToolCall
 from core.ports.gateway import GatewayError
+from core.ports.identity_provider import IdentityProvider
 from prompt_toolkit import PromptSession
 from prompt_toolkit.formatted_text import HTML
 from rich.console import Console
@@ -14,19 +16,20 @@ from enzo.presentation.ui.theme import PROMPT_HTML, THEME
 
 console = Console(theme=THEME)
 
-HELP = "/login <user>  ·  /replay <trace_id>  ·  /help  ·  /exit"
+HELP = "/login <user>  ·  /agent <agent>  ·  /replay <trace_id>  ·  /help  ·  /exit"
 
 
-async def run_shell(agent: TriageAgent, identity: Identity) -> None:
+async def run_shell(agent: TriageAgent, provider: IdentityProvider, identity: Identity) -> None:
     """Run the interactive loop until the user exits.
 
     Args:
         agent: The triage agent answering questions.
+        provider: Issues tokens when the user or agent changes.
         identity: User and agent the session starts with.
     """
     session: PromptSession[str] = PromptSession()
     agent.on_step = _print_step  # steps appear live, while the spinner runs
-    print_banner(console, identity.user)
+    print_banner(console, f"{identity.user} · {identity.agent}")
 
     while True:
         try:
@@ -39,9 +42,8 @@ async def run_shell(agent: TriageAgent, identity: Identity) -> None:
             break
         if text == "/help":
             console.print(HELP, style="muted")
-        elif text.startswith("/login "):
-            identity = identity.model_copy(update={"user": f"user:{text.split(maxsplit=1)[1]}"})
-            console.print(f"logged in as [accent]{identity.user}[/accent]")
+        elif text.startswith(("/login ", "/agent ")):
+            identity = _switch(provider, identity, text)
         elif text.startswith("/replay"):
             console.print("[muted]replay: not implemented (mock)[/muted]")
         elif text.startswith("/"):
@@ -90,3 +92,26 @@ def _print_step(step: ToolCall) -> None:
     """
     style = "allow" if step.decision == "ALLOW" else "deny"
     console.print(f"  → {step.service:<18} {step.action:<30} [{style}]{step.decision}[/{style}]")
+
+
+
+def _switch(provider: IdentityProvider, identity: Identity, command: str) -> Identity:
+    """Log in as another user (/login) or act through another agent (/agent), with fresh tokens.
+
+    Args:
+        provider: Issues the tokens.
+        identity: The current identity.
+        command: "/login <user>" or "/agent <agent>".
+
+    Returns:
+        The new identity, or the current one if the name is unknown.
+    """
+    verb, name = command.split(maxsplit=1)
+    user, agent = (f"user:{name}", identity.agent) if verb == "/login" else (identity.user, f"agent:{name}")
+    try:
+        identity = provider.login(user, agent)
+    except AuthError as error:
+        console.print(f"[deny]{error}[/deny]")
+        return identity
+    console.print(f"logged in as [accent]{identity.user}[/accent] · acting through [accent]{identity.agent}[/accent]")
+    return identity

@@ -3,10 +3,9 @@
 import asyncio
 
 import typer
-from core.models.identity import Identity
 
 from enzo import __version__
-from enzo.bootstrap import build_agent
+from enzo.bootstrap import build_agent, build_identity_provider
 from enzo.config import settings
 from enzo.presentation.cli.shell import run_shell
 
@@ -26,5 +25,6 @@ def main(version: bool = typer.Option(False, "--version", "-v", help="Show versi
     if version:
         typer.echo(f"enzo {__version__}")
         raise typer.Exit()
-    identity = Identity(user=settings.user, agent=settings.id)
-    asyncio.run(run_shell(build_agent(settings), identity))
+    provider = build_identity_provider(settings)
+    identity = provider.login(settings.user, settings.id)
+    asyncio.run(run_shell(build_agent(settings), provider, identity))

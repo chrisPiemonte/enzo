@@ -390,18 +390,25 @@ version = "0.1.0"
 source = { editable = "core" }
 dependencies = [
     { name = "httpx" },
-    { name = "mlflow" },
     { name = "pydantic" },
+    { name = "pyjwt" },
     { name = "pyyaml" },
+]
+
+[package.optional-dependencies]
+tracing = [
+    { name = "mlflow" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "mlflow", specifier = ">=3.17.0" },
+    { name = "mlflow", marker = "extra == 'tracing'", specifier = ">=3.17.0" },
     { name = "pydantic", specifier = ">=2.14.0" },
+    { name = "pyjwt", specifier = ">=2.15.1" },
     { name = "pyyaml", specifier = ">=6.0.3" },
 ]
+provides-extras = ["tracing"]
 
 [[package]]
 name = "cryptography"
@@ -516,7 +523,7 @@ source = { editable = "enzo" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "anthropic" },
-    { name = "core" },
+    { name = "core", extra = ["tracing"] },
     { name = "httpx" },
     { name = "mcp" },
     { name = "mlflow" },
@@ -535,7 +542,7 @@ dependencies = [
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=1.2.2" },
     { name = "anthropic", specifier = ">=1.13.0" },
-    { name = "core", editable = "core" },
+    { name = "core", extras = ["tracing"], editable = "core" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "mcp", specifier = ">=2.3.0" },
     { name = "mlflow", specifier = ">=3.17.0" },
@@ -662,9 +669,10 @@ source = { editable = "services/gateway" }
 dependencies = [
     { name = "a2a-sdk" },
     { name = "anthropic" },
-    { name = "core" },
+    { name = "core", extra = ["tracing"] },
     { name = "fastapi" },
     { name = "httpx" },
+    { name = "httpx2" },
     { name = "mcp" },
     { name = "openai" },
     { name = "pydantic-settings" },
@@ -676,9 +684,10 @@ dependencies = [
 requires-dist = [
     { name = "a2a-sdk", specifier = ">=1.2.2" },
     { name = "anthropic", specifier = ">=1.13.0" },
-    { name = "core", editable = "core" },
+    { name = "core", extras = ["tracing"], editable = "core" },
     { name = "fastapi", specifier = ">=0.143.0" },
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "httpx2", specifier = ">=2.13.1" },
     { name = "mcp", specifier = ">=2.3.0" },
     { name = "openai", specifier = ">=3.28.0" },
     { name = "pydantic-settings", specifier = ">=2.15.0" },

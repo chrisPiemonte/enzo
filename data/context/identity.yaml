@@ -1,0 +1,15 @@
+# Who may do what. The STUB identity provider signs these claims into tokens at login.
+# Changing a policy is a data change: edit here, log in again.
+users:
+  user:maria:
+    accounts: [Novacrest Pharma]
+    approve_orders: true
+  user:tom:
+    accounts: [Bluefen Diagnostics]
+    approve_orders: true
+
+agents:
+  agent:triage:
+    scopes: [telemetry:read, history:read, manuals:read, orders:request]
+  agent:intern:            # a second agent identity, to show that permission = user ∩ agent
+    scopes: [manuals:read]

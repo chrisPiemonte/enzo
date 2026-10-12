@@ -25,6 +25,7 @@ accept-no-yields-doc = false
 
 [tool.mypy]
 strict = true
+plugins = ["pydantic.mypy"]  # lets mypy see that settings fields come from the environment
 
 [dependency-groups]
 dev = [

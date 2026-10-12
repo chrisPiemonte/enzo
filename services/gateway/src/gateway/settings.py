@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -16,6 +17,7 @@ class Settings(BaseSettings):
     openai_url: str = "http://localhost:11434/v1"
     anthropic_url: str = "http://localhost:11434"
     docker_socket: str = "/var/run/docker.sock"
+    identity_secret: str = Field(validation_alias="IDENTITY_SECRET")  # shared by every service
     mlflow_url: str = "http://localhost:5001"
     experiment: str = "gateway"
 

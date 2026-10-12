@@ -43,6 +43,6 @@ class ContextBuilder:
             instructions=await load_instructions(self.prompts, *self.prompt),
             memory=await load_memory(self.memory, identity),
             knowledge=await load_knowledge(self.knowledge, question, identity),
-            tools=await load_tools(self.gateway),
+            tools=await load_tools(self.gateway, identity),
             history=[Message(role="user", content=question)],
         )
