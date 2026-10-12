@@ -1,0 +1,21 @@
+[project]
+name = "parts-agent"
+version = "0.1.0"
+description = "Enzo – A2A agent that orders spare parts and schedules technician visits"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "a2a-sdk[http-server]>=1.2.2",
+    "pyyaml>=6.0.3",
+    "starlette>=1.7.0",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+parts-agent = "parts.main:run"
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "parts"

@@ -1,0 +1,13 @@
+# Service history data product (synthetic). Owned by this service only.
+dataset_version: "2026-10-01"
+instruments:
+  SN-1001:
+    account: Novacrest Pharma
+    events:
+      - {when: "2026-02-10", fault: E42, action: replaced heater assembly, part: P-123, outcome: fixed}
+    record_ids: [svc-1001-007]
+  SN-2002:
+    account: Bluefen Diagnostics
+    events:
+      - {when: "2026-07-03", fault: E17, action: replaced pressure sensor, part: P-789, outcome: fixed}
+    record_ids: [svc-2002-003]

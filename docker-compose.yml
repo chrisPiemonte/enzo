@@ -1,0 +1,95 @@
+services:
+
+  # ── Platform (always up, also during development) ────────────────────────────
+
+  ollama:
+    image: ollama/ollama:0.40.3
+    ports:
+      - "11435:11434"   # 11435 on the host, so it does not clash with a native Ollama on 11434
+    volumes:
+      - ${OLLAMA_MODELS_DIR:-./data/runtime/ollama/models}:/root/.ollama/models   # shared by every Ollama container
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      retries: 20
+
+  ollama-pull:   # one-shot: downloads the model into the shared folder, then exits
+    image: ollama/ollama:0.40.3
+    environment:
+      OLLAMA_HOST: ollama:11434
+    entrypoint: ["ollama", "pull", "qwen3:4b"]   # must match the model in services/gateway/gateway.yaml
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.17.0
+    command: >
+      mlflow server --host 0.0.0.0 --port 5000
+      --backend-store-uri sqlite:////data/mlflow.db
+      --artifacts-destination /data/artifacts
+    ports:
+      - "5001:5000"     # 5001 on the host: macOS AirPlay already uses 5000
+    volumes:
+      - ./data/runtime/mlflow:/data
+
+  # ── Services ─────────────────────────────────────────────────────────────────
+
+  gateway:
+    build:
+      context: .
+      dockerfile: services/gateway/Dockerfile
+    env_file: .env
+    environment:
+      GATEWAY_OPENAI_URL: ${GATEWAY_DOCKER_OLLAMA_URL}/v1
+      GATEWAY_ANTHROPIC_URL: ${GATEWAY_DOCKER_OLLAMA_URL}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/gateway/gateway.yaml:/app/services/gateway/gateway.yaml:ro   # swap = edit + restart, no rebuild
+      - /var/run/docker.sock:/var/run/docker.sock:ro   # registry: discovers services by their enzo.* labels
+    depends_on:
+      ollama-pull:
+        condition: service_completed_successfully
+
+  mcp-telemetry:
+    build:
+      context: .
+      dockerfile: services/mcp-telemetry/Dockerfile
+    labels:
+      enzo.kind: mcp      # discovered by the gateway's registry
+      enzo.port: "9001"
+    ports:
+      - "9001:9001"   # direct access for debugging; the agent goes through the gateway
+
+  mcp-history:
+    build:
+      context: .
+      dockerfile: services/mcp-history/Dockerfile
+    labels:
+      enzo.kind: mcp      # discovered by the gateway's registry
+      enzo.port: "9002"
+    ports:
+      - "9002:9002"   # direct access for debugging; the agent goes through the gateway
+
+  mcp-manuals:
+    build:
+      context: .
+      dockerfile: services/mcp-manuals/Dockerfile
+    labels:
+      enzo.kind: mcp      # discovered by the gateway's registry
+      enzo.port: "9003"
+    ports:
+      - "9003:9003"   # direct access for debugging; the agent goes through the gateway
+
+  parts-agent:
+    build:
+      context: .
+      dockerfile: services/parts-agent/Dockerfile
+    environment:
+      PARTS_AGENT_URL: http://parts-agent:9100/   # advertised on the agent card; callers send A2A messages here
+    labels:
+      enzo.kind: a2a      # discovered by the gateway's registry
+      enzo.port: "9100"
+    ports:
+      - "9100:9100"       # direct access for debugging; the agent goes through the gateway

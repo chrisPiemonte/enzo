@@ -1,0 +1,10 @@
+# Service manuals data product (synthetic). Owned by this service only.
+# The trap: P-456 is a real part, but it fits the GC-X200, not the GC-X100.
+dataset_version: "2026-10-01"
+models:
+  GC-X100:
+    - {section: "7.1", code: E17, text: "Carrier gas pressure low. Check the supply; replace pressure sensor P-789."}
+    - {section: "7.3", code: E42, text: "Oven temperature unstable. Replace heater assembly P-123."}
+  GC-X200:
+    - {section: "6.2", code: E17, text: "Carrier gas pressure low. Check the supply; replace pressure sensor P-789."}
+    - {section: "6.4", code: E42, text: "Oven temperature unstable. Replace heater assembly P-456."}

@@ -1,0 +1,18 @@
+# Model gateway config. Each $${...} placeholder is replaced by the gateway setting of that name (settings.py, .env).
+# The provider swap is one line: change the `provider` of an alias.
+
+providers:
+  ollama-openai:
+    kind: openai
+    base_url: "${openai_url}"
+  ollama-anthropic:
+    kind: anthropic
+    base_url: "${anthropic_url}"
+  mock:
+    kind: mock
+    base_url: ""
+
+aliases:
+  triage-default:
+    provider: ollama-openai
+    model: "qwen3:4b"

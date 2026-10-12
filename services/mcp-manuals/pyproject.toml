@@ -1,0 +1,19 @@
+[project]
+name = "mcp-manuals"
+version = "0.1.0"
+description = "Enzo – MCP server for the manuals data product"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "mcp>=2.3.0",
+    "pyyaml>=6.0.3",
+]
+
+[project.scripts]
+mcp-manuals = "manuals.server:run"
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "manuals"

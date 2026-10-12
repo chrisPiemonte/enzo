@@ -1,0 +1,17 @@
+# Telemetry data product (synthetic). Owned by this service only.
+dataset_version: "2026-10-01"
+instruments:
+  SN-1001:
+    model: GC-X100
+    account: Novacrest Pharma
+    oven_setpoint_c: 250
+    oven_readings_c: {min: 244, max: 256}
+    errors: {E42: 3}
+    record_ids: [tel-1001-0412]
+  SN-2002:
+    model: GC-X200
+    account: Bluefen Diagnostics
+    oven_setpoint_c: 220
+    oven_readings_c: {min: 219, max: 221}
+    errors: {E17: 1}
+    record_ids: [tel-2002-0398]

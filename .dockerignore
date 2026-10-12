@@ -1,0 +1,7 @@
+.git
+.venv
+.env
+data/runtime
+data/resources
+**/__pycache__
+**/.mypy_cache

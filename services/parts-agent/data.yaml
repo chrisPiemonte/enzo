@@ -1,0 +1,16 @@
+# Parts and scheduling data product (synthetic). Owned by this agent only.
+as_of: "2026-10-12"   # "today" for this dataset, so answers are reproducible
+
+instruments:          # installed base: which model each serial is
+  SN-1001: {model: GC-X100, account: Novacrest Pharma}
+  SN-2002: {model: GC-X200, account: Bluefen Diagnostics}
+
+parts:
+  P-123: {name: heater assembly, fits: [GC-X100], stock: 4, lead_days: 0}
+  P-456: {name: heater assembly, fits: [GC-X200], stock: 0, lead_days: 5}
+  P-789: {name: pressure sensor, fits: [GC-X100, GC-X200], stock: 12, lead_days: 0}
+
+calendar:             # free technician slots, earliest first
+  - {date: "2026-10-14", window: "14:00–16:00", technician: "A. Rossi"}
+  - {date: "2026-10-15", window: "09:00–11:00", technician: "L. Brandt"}
+  - {date: "2026-10-19", window: "10:00–12:00", technician: "A. Rossi"}

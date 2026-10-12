@@ -1,0 +1,2 @@
+# Named pointers to versions, mirroring MLflow prompt aliases.
+production: 3
