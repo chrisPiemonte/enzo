@@ -61,6 +61,8 @@ services:
     build:
       context: .
       dockerfile: services/mcp-telemetry/Dockerfile
+    environment:
+      IDENTITY_SECRET: ${IDENTITY_SECRET}   # verifies the caller's tokens
     labels:
       enzo.kind: mcp      # discovered by the gateway's registry
       enzo.port: "9001"
@@ -71,6 +73,8 @@ services:
     build:
       context: .
       dockerfile: services/mcp-history/Dockerfile
+    environment:
+      IDENTITY_SECRET: ${IDENTITY_SECRET}   # verifies the caller's tokens
     labels:
       enzo.kind: mcp      # discovered by the gateway's registry
       enzo.port: "9002"
@@ -81,6 +85,8 @@ services:
     build:
       context: .
       dockerfile: services/mcp-manuals/Dockerfile
+    environment:
+      IDENTITY_SECRET: ${IDENTITY_SECRET}   # verifies the caller's tokens
     labels:
       enzo.kind: mcp      # discovered by the gateway's registry
       enzo.port: "9003"

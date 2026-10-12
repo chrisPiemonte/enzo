@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Enzo – MCP server for the history data product"
 requires-python = ">=3.13,<3.14"
 dependencies = [
+    "core",
     "mcp>=2.3.0",
     "pyyaml>=6.0.3",
 ]
@@ -17,3 +18,6 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-name = "history"
+
+[tool.uv.sources]
+core = { workspace = true }

@@ -1186,12 +1186,14 @@ name = "mcp-history"
 version = "0.1.0"
 source = { editable = "services/mcp-history" }
 dependencies = [
+    { name = "core" },
     { name = "mcp" },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "core", editable = "core" },
     { name = "mcp", specifier = ">=2.3.0" },
     { name = "pyyaml", specifier = ">=6.0.3" },
 ]
@@ -1201,12 +1203,14 @@ name = "mcp-manuals"
 version = "0.1.0"
 source = { editable = "services/mcp-manuals" }
 dependencies = [
+    { name = "core" },
     { name = "mcp" },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "core", editable = "core" },
     { name = "mcp", specifier = ">=2.3.0" },
     { name = "pyyaml", specifier = ">=6.0.3" },
 ]
@@ -1216,12 +1220,14 @@ name = "mcp-telemetry"
 version = "0.1.0"
 source = { editable = "services/mcp-telemetry" }
 dependencies = [
+    { name = "core" },
     { name = "mcp" },
     { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "core", editable = "core" },
     { name = "mcp", specifier = ">=2.3.0" },
     { name = "pyyaml", specifier = ">=6.0.3" },
 ]
