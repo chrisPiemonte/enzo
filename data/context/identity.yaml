@@ -11,6 +11,10 @@ users:
     accounts: [Novacrest Pharma]
     approve_orders: false
 
+  user:roberto:
+    accounts: [Novacrest Pharma]
+    approve_orders: true
+
 agents:
   agent:triage:
     scopes: [telemetry:read, history:read, manuals:read, orders:request]

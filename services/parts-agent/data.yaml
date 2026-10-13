@@ -4,6 +4,7 @@ as_of: "2026-10-12"   # "today" for this dataset, so answers are reproducible
 instruments:          # installed base: which model each serial is
   SN-1001: {model: GC-X100, account: Novacrest Pharma}
   SN-2002: {model: GC-X200, account: Bluefen Diagnostics}
+  SN-3003: {model: GC-X200, account: Novacrest Pharma}
 
 parts:
   P-123: {name: heater assembly, fits: [GC-X100], stock: 4, lead_days: 0}

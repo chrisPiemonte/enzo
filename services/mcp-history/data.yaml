@@ -11,3 +11,9 @@ instruments:
     events:
       - {when: "2026-07-03", fault: E17, action: replaced pressure sensor, part: P-789, outcome: fixed}
     record_ids: [svc-2002-003]
+  
+  SN-3003:
+    account: Novacrest Pharma
+    events:
+      - {when: "2026-05-20", fault: E42, action: recalibrated oven sensor, part: none, outcome: recurred}
+    record_ids: [svc-3003-001]

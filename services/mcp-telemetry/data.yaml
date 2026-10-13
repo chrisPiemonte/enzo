@@ -15,3 +15,11 @@ instruments:
     oven_readings_c: {min: 219, max: 221}
     errors: {E17: 1}
     record_ids: [tel-2002-0398]
+  
+  SN-3003:
+    model: GC-X200
+    account: Novacrest Pharma
+    oven_setpoint_c: 220
+    oven_readings_c: {min: 205, max: 236}
+    errors: {E42: 5}
+    record_ids: [tel-3003-0001]
