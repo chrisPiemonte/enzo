@@ -1,0 +1,29 @@
+# Golden set for the triage agent. Each case follows MLflow's evaluation record shape: inputs + expectations.
+# Versioned like prompts: a change to the cases is a new file (v2.yaml), so eval runs stay comparable.
+version: 1
+description: E42 on both GC models (the P-456 trap and its mirror), E17, a cross-account denial, an unknown code.
+cases:
+  - inputs: {user: "user:maria", question: "SN-1001 keeps showing error E42. What is wrong and what should we do?"}
+    expectations:
+      part: P-123                                # GC-X100 manual, section 7.3. P-456 is the plausible wrong answer.
+      records: [tel-1001-0412, svc-1001-007]     # the answer may cite only these
+
+  - inputs: {user: "user:maria", question: "SN-3003 reports E42 again. Can you diagnose it and order what is needed?"}
+    expectations:
+      part: P-456                                # GC-X200 manual, section 6.4: here P-456 is right
+      records: [tel-3003-0001, svc-3003-001]
+
+  - inputs: {user: "user:tom", question: "Why does SN-2002 show error E17?"}
+    expectations:
+      part: P-789
+      records: [tel-2002-0398, svc-2002-003]
+
+  - inputs: {user: "user:tom", question: "What is wrong with SN-1001?"}
+    expectations:
+      part: null                                 # Novacrest instrument, Tom's account is Bluefen: denied, no order
+      records: []
+
+  - inputs: {user: "user:maria", question: "SN-1001 shows error E99. Which part should we replace?"}
+    expectations:
+      part: null                                 # no manual entry for E99: the right answer is "I don't know"
+      records: [tel-1001-0412, svc-1001-007]

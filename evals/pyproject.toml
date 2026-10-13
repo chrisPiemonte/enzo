@@ -1,0 +1,26 @@
+[project]
+name = "evals"
+version = "0.1.0"
+description = "Enzo – eval harness: golden sets, gates and promotion decisions, recorded in MLflow"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "core[tracing]",
+    "enzo",
+    "pydantic-settings>=2.15.0",
+    "pyyaml>=6.0.3",
+    "typer>=0.27.3",
+]
+
+[project.scripts]
+evals = "evals.main:app"
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "evals"
+
+[tool.uv.sources]
+core = { workspace = true }
+enzo = { workspace = true }

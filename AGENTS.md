@@ -71,8 +71,8 @@ image and silently runs the old code.
 Config lives in the root `pyproject.toml` and applies to every service. Both must pass before a step is done.
 
 ```bash
-uv run pylint enzo/src core/src services/*/src
-uv run mypy enzo/src core/src services/*/src
+uv run pylint enzo/src core/src evals/src services/*/src
+uv run mypy enzo/src core/src evals/src services/*/src
 ```
 
 pylint also owns import order: standard library, then third-party (including `core`), then the package's own

@@ -11,6 +11,7 @@ resolution-markers = [
 members = [
     "core",
     "enzo",
+    "evals",
     "gateway",
     "mcp-history",
     "mcp-manuals",
@@ -555,6 +556,27 @@ requires-dist = [
     { name = "pyfiglet", specifier = ">=1.0.4" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "rich", specifier = ">=15.0.0" },
+    { name = "typer", specifier = ">=0.27.3" },
+]
+
+[[package]]
+name = "evals"
+version = "0.1.0"
+source = { editable = "evals" }
+dependencies = [
+    { name = "core", extra = ["tracing"] },
+    { name = "enzo" },
+    { name = "pydantic-settings" },
+    { name = "pyyaml" },
+    { name = "typer" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "core", extras = ["tracing"], editable = "core" },
+    { name = "enzo", editable = "enzo" },
+    { name = "pydantic-settings", specifier = ">=2.15.0" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "typer", specifier = ">=0.27.3" },
 ]
 

@@ -1,5 +1,5 @@
 [tool.uv.workspace]
-members = ["enzo", "core", "services/*"]
+members = ["enzo", "core", "evals", "services/*"]
 
 [tool.pylint.main]
 load-plugins = ["pylint.extensions.docparams"]
