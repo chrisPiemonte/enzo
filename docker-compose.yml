@@ -34,6 +34,22 @@ services:
     # --allowed-hosts: MLflow rejects unknown Host headers; services reach it as mlflow:5000, the host as localhost:5001
     volumes:
       - ./data/runtime/mlflow:/data
+    healthcheck:   # the image has no curl: ask /health with Python
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 5s
+      retries: 20
+
+  prompts-sync:   # one-shot: registers data/context/prompts in the MLflow prompt registry, then exits
+    build:
+      context: .
+      dockerfile: services/prompts-sync/Dockerfile
+    environment:
+      PROMPTS_MLFLOW_URL: http://mlflow:5000   # MLflow as seen from inside Docker
+    volumes:
+      - ./data/context/prompts:/app/data/context/prompts:ro   # new prompt versions need no rebuild, only a rerun
+    depends_on:
+      mlflow:
+        condition: service_healthy
 
   # ── Services ─────────────────────────────────────────────────────────────────
 
