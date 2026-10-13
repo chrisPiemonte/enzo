@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     # Adapter switches, one per port.
     gateway: Literal["mock", "http"] = "mock"
     audit: Literal["mock"] = "mock"
-    prompts: Literal["file"] = "file"
+    prompts: Literal["file", "mlflow"] = "file"
 
 
 settings = Settings()

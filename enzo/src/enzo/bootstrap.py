@@ -2,8 +2,10 @@
 
 from core.adapters.file_prompt_store import FilePromptStore
 from core.adapters.http_gateway import HttpGateway
+from core.adapters.mlflow_prompt_store import MlflowPromptStore
 from core.ports.gateway import Gateway
 from core.ports.identity_provider import IdentityProvider
+from core.ports.prompt_store import PromptStore
 from core.tracing import setup as setup_tracing
 
 from enzo.application.actions import Actions
@@ -29,7 +31,7 @@ def build_agent(settings: Settings) -> TriageAgent:
     setup_tracing(settings.mlflow_url, settings.experiment)
     gateway, memory = _gateway(settings), MockMemoryStore()
     builder = ContextBuilder(
-        prompts=FilePromptStore(settings.prompts_dir),
+        prompts=_prompts(settings),
         prompt=(settings.prompt, settings.prompt_version),
         memory=memory,
         knowledge=MockKnowledgeStore(),
@@ -52,6 +54,22 @@ def _gateway(settings: Settings) -> Gateway:
             return HttpGateway(settings.gateway_url, settings.model_alias)
         case "mock":
             return MockGateway()
+
+
+def _prompts(settings: Settings) -> PromptStore:
+    """Pick the prompt store adapter.
+
+    Args:
+        settings: Agent settings.
+
+    Returns:
+        The MLflow prompt registry, or the prompt files it is synced from.
+    """
+    match settings.prompts:
+        case "mlflow":
+            return MlflowPromptStore()
+        case "file":
+            return FilePromptStore(settings.prompts_dir)
 
 
 def build_identity_provider(settings: Settings) -> IdentityProvider:
