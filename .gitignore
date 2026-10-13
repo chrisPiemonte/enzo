@@ -224,3 +224,10 @@ data/runtime/
 
 # Planning docs: kept local, never pushed
 data/resources/specs/
+
+# Postman CLI local workspace files (the collection lives in the Postman cloud)
+.postman/
+postman/
+
+# Claude skills for this repo: kept local, never pushed
+data/skills/
