@@ -27,11 +27,14 @@ async def sync_prompt(files: FilePromptStore, name: str) -> None:
         name: Prompt name, i.e. its subfolder.
 
     Raises:
-        SyncError: Versions have a gap, a registered version differs from its file, or the registry has extra ones.
+        SyncError: Versions have a gap or a wrong frontmatter version, a registered version differs from its file,
+            or the registry has extra ones.
     """
     numbers = _versions(files.root / name)
     for number in numbers:
         prompt = await files.load(name, str(number))
+        if prompt.version != number:
+            raise SyncError(f"{name}: v{number}.md says version {prompt.version} in its frontmatter")
         registered = _registered(name, number)
         if registered is None:
             created = mlflow.genai.register_prompt(name, prompt.text, commit_message=prompt.description,
