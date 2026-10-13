@@ -15,8 +15,13 @@ users:
     accounts: [Novacrest Pharma]
     approve_orders: true
 
+  user:evals:              # the eval harness itself: sees no customer data
+    accounts: []
+
 agents:
   agent:triage:
     scopes: [telemetry:read, history:read, manuals:read, orders:request]
   agent:intern:            # a second agent identity, to show that permission = user ∩ agent
     scopes: [manuals:read]
+  agent:judge:             # grades answers in the eval harness: calls models only, reads no data
+    scopes: []

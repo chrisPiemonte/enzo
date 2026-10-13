@@ -16,3 +16,6 @@ aliases:
   triage-default:
     provider: ollama-openai
     model: "qwen3:4b"
+  judge:                 # grades answers in the eval harness; swappable apart from the agent it grades
+    provider: ollama-openai
+    model: "qwen3:4b"

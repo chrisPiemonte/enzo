@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     dir: Path = Path("data/context/evals")
     mlflow_url: str = "http://localhost:5001"
     experiment: str = "evals"
+    gateway_url: str = "http://localhost:8000"
+    judge_alias: str = "judge"
+    judge_user: str = "user:evals"
+    judge_agent: str = "agent:judge"
 
 
 settings = Settings()
