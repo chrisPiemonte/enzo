@@ -1,0 +1,22 @@
+[project]
+name = "prompts-sync"
+version = "0.1.0"
+description = "Enzo – one-shot job that registers the versioned prompts in the MLflow prompt registry"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "core[tracing]",
+    "pydantic-settings>=2.15.0",
+]
+
+[project.scripts]
+prompts-sync = "prompts.sync:run"
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "prompts"
+
+[tool.uv.sources]
+core = { workspace = true }
