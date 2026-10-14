@@ -1,0 +1,6 @@
+# Registry policy: the minimum score per gate (0..1). The catalogue passes only if every gate passes.
+golden: v1             # the golden set these thresholds were set against
+gates:
+  accuracy: 0.9        # the right skill (or none) is picked for 90% of the requests
+  separation: 1.0      # no two skills are ever confused with each other: no overlap
+  coverage: 1.0        # every skill is the right answer at least once: no useless skill

@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     experiment: str = "evals"
     gateway_url: str = "http://localhost:8000"
     judge_alias: str = "judge"
+    router_alias: str = "triage-default"  # the skills eval routes with the agent's own model
     judge_user: str = "user:evals"
     judge_agent: str = "agent:judge"
 

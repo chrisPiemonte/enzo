@@ -43,10 +43,10 @@ def decide(policy: Policy, metrics: dict[str, float]) -> list[Gate]:
 
     Args:
         policy: The promotion policy.
-        metrics: MLflow eval metrics, e.g. {"grounding/mean": 1.0}.
+        metrics: Per-case scorer means ({"grounding/mean": 1.0}) and run-wide metrics ({"separation": 1.0}).
 
     Returns:
         One outcome per gate, in policy order.
     """
-    return [Gate(name=name, score=metrics.get(f"{name}/mean"), threshold=threshold)
+    return [Gate(name=name, score=metrics.get(f"{name}/mean", metrics.get(name)), threshold=threshold)
             for name, threshold in policy.gates.items()]

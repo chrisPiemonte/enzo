@@ -1,0 +1,31 @@
+# Golden set for skill selection: one short request -> the one skill that should answer it, or none.
+# Versioned like prompts: a change to the cases is a new file (v2.yaml), so eval runs stay comparable.
+version: 1
+description: Three requests per MCP skill, two for the parts agent, two that no skill should take.
+cases:
+  - {inputs: {request: "What error codes has SN-1001 reported in the last 24 hours?"},
+     expectations: {skill: get_recent_telemetry}}
+  - {inputs: {request: "Show me the current oven temperature readings of SN-3003."},
+     expectations: {skill: get_recent_telemetry}}
+  - {inputs: {request: "Is SN-2002 throwing any errors right now?"},
+     expectations: {skill: get_recent_telemetry}}
+  - {inputs: {request: "When was SN-1001 last repaired, and which parts were used?"},
+     expectations: {skill: get_service_history}}
+  - {inputs: {request: "Has SN-3003 had an E42 before? What was done about it?"},
+     expectations: {skill: get_service_history}}
+  - {inputs: {request: "List the past service visits of SN-2002."},
+     expectations: {skill: get_service_history}}
+  - {inputs: {request: "What does fault code E17 mean on a GC-X200?"},
+     expectations: {skill: search_manual}}
+  - {inputs: {request: "Which part does the GC-X100 manual recommend for E42?"},
+     expectations: {skill: search_manual}}
+  - {inputs: {request: "What is the oven calibration procedure for the GC-X100?"},
+     expectations: {skill: search_manual}}
+  - {inputs: {request: "Order heater assembly P-123 for SN-1001 and schedule a technician."},
+     expectations: {skill: order_part_and_schedule_visit}}
+  - {inputs: {request: "Book a technician visit for SN-2002 next week to replace pressure sensor P-789."},
+     expectations: {skill: order_part_and_schedule_visit}}
+  - {inputs: {request: "What is the weather in Basel tomorrow?"},
+     expectations: {skill: none}}
+  - {inputs: {request: "Write a haiku about lab instruments."},
+     expectations: {skill: none}}

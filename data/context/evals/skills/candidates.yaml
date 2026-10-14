@@ -1,0 +1,5 @@
+# Skills someone wants to add to the registry. Never built: the eval adds one to the catalogue for a single run
+# (`uv run evals skills --candidate <name>`) to check it is distinct from every registered skill and useful.
+get_instrument_status:
+  description: "Current status of an instrument: its latest readings and error codes."
+  input_schema: {type: object, properties: {serial: {type: string}}, required: [serial]}
