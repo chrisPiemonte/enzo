@@ -1,0 +1,8 @@
+# Promotion policy for the triage prompt: the minimum pass rate per gate (scorer name -> 0..1).
+# A prompt version is certified only if every gate passes; one failing gate blocks it.
+golden: v2             # the golden set these thresholds were set against
+gates:
+  grounding: 1.0       # G1: the plausible wrong part must never pass
+  evidence: 0.8        # G2: cites only records the tools returned
+  explains_first: 0.8  # G3 (LLM judge): diagnosis before any order
+  history: 0.8         # G4: consults the service history

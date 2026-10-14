@@ -1,2 +1,2 @@
 # Named pointers to versions, mirroring MLflow prompt aliases.
-production: 4
+# `production` is not set here: only the eval moves it (`uv run evals prompt triage-system <n> --promote`).

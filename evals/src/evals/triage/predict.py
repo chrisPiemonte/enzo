@@ -10,19 +10,21 @@ from enzo.config import Settings
 Predict = Callable[[str, str], dict[str, Any]]
 
 
-def make_predict(base: Settings, prompt_version: str, experiment: str) -> Predict:
+def make_predict(base: Settings, prompt: str, version: int, experiment: str) -> Predict:
     """Build the triage agent once and wrap it in the function mlflow.genai.evaluate calls per case.
 
     Args:
-        base: The agent's own settings; only the prompt version, the adapters and the experiment are overridden.
-        prompt_version: Version number or alias of the prompt under test.
+        base: The agent's own settings; only the prompt, the adapters and the experiment are overridden.
+        prompt: Name of the prompt under test, e.g. triage-system.
+        version: Version number of the prompt under test.
         experiment: MLflow experiment the agent's traces go to while it is evaluated.
 
     Returns:
         A function taking a case's inputs (user, question) and returning what the scorers read.
     """
     settings = base.model_copy(
-        update={"prompt_version": prompt_version, "prompts": "mlflow", "gateway": "http", "experiment": experiment}
+        update={"prompt": prompt, "prompt_version": str(version), "prompts": "mlflow", "gateway": "http",
+                "experiment": experiment}
     )
     agent, identities = build_agent(settings), build_identity_provider(settings)
 

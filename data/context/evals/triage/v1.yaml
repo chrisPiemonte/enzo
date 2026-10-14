@@ -1,3 +1,5 @@
+# UNUSABLE: MLflow rejects an expectation whose value is null (part: null), so this version never produced a run.
+# Kept because it is registered in MLflow as triage-golden-v1. Use v2.yaml.
 # Golden set for the triage agent. Each case follows MLflow's evaluation record shape: inputs + expectations.
 # Versioned like prompts: a change to the cases is a new file (v2.yaml), so eval runs stay comparable.
 version: 1

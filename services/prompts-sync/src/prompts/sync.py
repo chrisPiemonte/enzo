@@ -93,7 +93,7 @@ def _sync_aliases(folder: Path, name: str) -> None:
         name: Prompt name.
     """
     aliases_file = folder / "aliases.yaml"
-    aliases: dict[str, int] = yaml.safe_load(aliases_file.read_text()) if aliases_file.exists() else {}
+    aliases: dict[str, int] = (yaml.safe_load(aliases_file.read_text()) if aliases_file.exists() else None) or {}
     for alias, number in aliases.items():
         mlflow.genai.set_prompt_alias(name, alias, number)
         log.info("%s @%s -> v%d", name, alias, number)

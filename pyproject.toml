@@ -5,8 +5,8 @@ members = ["enzo", "core", "evals", "services/*"]
 load-plugins = ["pylint.extensions.docparams"]
 
 [tool.pylint.imports]
-# The core/ folder at the repo root would make pylint treat `core` as local; it is an installed dependency.
-known-third-party = ["core"]
+# The core/ and enzo/ folders at the repo root would make pylint treat them as local; they are installed dependencies.
+known-third-party = ["core", "enzo"]
 
 [tool.pylint."messages control"]
 # unused-argument: MOCK, mock functions ignore their arguments; re-enable once the real implementations land.

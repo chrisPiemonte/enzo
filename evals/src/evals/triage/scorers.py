@@ -7,11 +7,12 @@ from mlflow.entities import Feedback
 from mlflow.genai.scorers import Scorer, scorer
 
 PART = re.compile(r"\bP-\d+\b")
+NO_PART = "none"  # MLflow rejects null expectations, so "no part" is spelled out
 RECORD = re.compile(r"\b[a-z]{3}-\d+-\d+\b")  # e.g. tel-1001-0412, svc-1001-007
 
 
 def grounding(outputs: dict[str, Any], expectations: dict[str, Any]) -> Feedback:
-    """G1: the answer names exactly the part the manual lists for this model, or no part when none is expected.
+    """G1: the answer names exactly the part the manual lists for this model, or no part when "none" is expected.
 
     Args:
         outputs: What the predict function returned (answer, handoff, tools).
@@ -21,8 +22,8 @@ def grounding(outputs: dict[str, Any], expectations: dict[str, Any]) -> Feedback
         Pass or fail, with the parts found.
     """
     found, expected = set(PART.findall(_text(outputs))), expectations["part"]
-    passed = found == ({expected} if expected else set())
-    return Feedback(value=passed, rationale=f"expected {expected or 'no part'}, found {sorted(found) or 'none'}")
+    passed = found == (set() if expected == NO_PART else {expected})
+    return Feedback(value=passed, rationale=f"expected {expected}, found {sorted(found) or NO_PART}")
 
 
 def evidence(outputs: dict[str, Any], expectations: dict[str, Any]) -> Feedback:
