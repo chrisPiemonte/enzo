@@ -34,12 +34,14 @@ enzo ──► gateway ──────────► mcp-telemetry · mcp-hi
 
 ## Install
 
-Needs only **git, [uv](https://docs.astral.sh/uv/), Python 3.13 and Docker Compose**.
+Needs **git, [uv](https://docs.astral.sh/uv/), Python 3.13, Docker Compose** and a native **[Ollama](https://ollama.com)**
+(the model runs on your machine's GPU; no API keys).
 
 ```bash
+ollama pull qwen3:4b             # the model (~2.5 GB), served by your native Ollama
 git clone https://github.com/chrisPiemonte/enzo.git && cd enzo
 cp .env.template .env
-docker compose up -d --build     # first run: builds the images and downloads the model (~2.5 GB)
+docker compose up -d --build     # MLflow, gateway, MCP servers, parts agent, prompt sync
 uv sync
 ```
 
@@ -49,10 +51,12 @@ Check that everything is up (the `ollama-pull` and `prompts-sync` jobs exit with
 docker compose ps -a
 ```
 
-> **Speed.** By default the model runs in the Ollama container, on CPU: it works anywhere but takes ~30 s to 2 min
-> per model turn. With [Ollama](https://ollama.com) installed natively (much faster, e.g. on a Mac's GPU), run
-> `ollama pull qwen3:4b`, set `GATEWAY_DOCKER_OLLAMA_URL=http://host.docker.internal:11434` in `.env`
-> (on Linux, also map `host.docker.internal` to `host-gateway`), then `docker compose up -d gateway`.
+> **Notes**
+> - Native Ollama is the default and is needed for a usable speed (~5–20 s per model turn on a Mac's GPU).
+> - Without it, set `GATEWAY_DOCKER_OLLAMA_URL=http://ollama:11434` in `.env` to use the bundled CPU container
+>   (it also downloads the model, ~2.5 GB). It works, but a model turn can take minutes and hit the agent's
+>   120 s timeout.
+> - On Linux, `host.docker.internal` must be mapped to `host-gateway` for the gateway container.
 
 ## Use
 
