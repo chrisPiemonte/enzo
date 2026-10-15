@@ -231,3 +231,6 @@ postman/
 
 # Claude skills for this repo: kept local, never pushed
 data/skills/
+
+# Submission archive: attached to the mail by hand, never committed
+enzo.zip
