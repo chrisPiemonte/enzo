@@ -234,3 +234,6 @@ data/skills/
 
 # Submission archive: attached to the mail by hand, never committed
 enzo.zip
+
+# The template line `parts/` (buildout) would hide the parts agent package
+!services/parts-agent/src/parts/
